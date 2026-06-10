@@ -484,11 +484,16 @@
       container.className = 'blocs-grid';
       container.innerHTML = '';
 
+      const _p = sessionStorage.getItem('pac_msmc_prenom') || '';
+      const _n = sessionStorage.getItem('pac_msmc_nom') || '';
+      const _e = sessionStorage.getItem('pac_msmc_email') || '';
+
       BLOCS.forEach(bloc => {
         const done   = studentProgress[bloc.id] === 'completed';
         const card   = document.createElement('a');
         card.className = 'bloc-card' + (done ? ' bloc-card--done' : '');
-        card.href    = done ? '#' : `${bloc.url}?h=${studentHash}`;
+        const _params = `?p=${encodeURIComponent(_p)}&n=${encodeURIComponent(_n)}&e=${encodeURIComponent(_e)}`;
+        card.href    = done ? '#' : `${bloc.url}${_params}`;
         if (!done) {
           card.target = '_blank';
           card.rel    = 'noopener noreferrer';
