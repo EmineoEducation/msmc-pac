@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Éminéo · PAC MSMC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --abysse:  #0B2B2D;
+      --petrole: #134547;
+      --menthe:  #5DE298;
+      --givre:   #E3FFF0;
+      --saumon:  #E89B77;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--abysse);
+      color: #fff;
+      font-family: 'IBM Plex Sans', system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── ÉCRAN LOGIN ── */
+    #screen-login {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+    .login-box {
+      background: var(--petrole);
+      border: 1px solid rgba(93,226,152,0.15);
+      border-radius: 20px;
+      padding: 40px 36px;
+      width: 100%;
+      max-width: 420px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+    .login-header { text-align: center; }
+    .login-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .login-logo-mark {
+      width: 32px; height: 32px;
+      background: var(--menthe);
+      border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .login-brand {
+      font-size: 16px; font-weight: 600;
+      letter-spacing: 0.05em; text-transform: uppercase;
+      color: var(--menthe);
+    }
+    .login-title {
+      font-size: 24px; font-weight: 600; line-height: 1.3;
+      color: #fff;
+    }
+    .login-sub {
+      margin-top: 6px;
+      font-size: 13px; color: rgba(255,255,255,0.45); font-weight: 300;
+    }
+    .login-rncp {
+      display: inline-block;
+      margin-top: 10px;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(93,226,152,0.7);
+      background: rgba(93,226,152,0.1);
+      border: 1px solid rgba(93,226,152,0.2);
+      border-radius: 20px;
+      padding: 3px 10px;
+    }
+
+    .login-fields {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .field label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 7px;
+    }
+    .field input {
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 15px;
+      padding: 11px 14px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .field input::placeholder { color: rgba(255,255,255,0.2); }
+    .field input:focus { border-color: var(--menthe); }
+
+    .btn-login {
+      width: 100%;
+      padding: 14px;
+      background: var(--menthe);
+      color: var(--abysse);
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.15s;
+    }
+    .btn-login:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-login:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+    #login-error {
+      font-size: 13px;
+      color: var(--saumon);
+      text-align: center;
+      min-height: 18px;
+    }
+
+    /* ── ÉCRAN PORTAIL ── */
+    #screen-portal {
+      display: none;
+      min-height: 100vh;
+      flex-direction: column;
+      align-items: center;
+      padding: 48px 20px 40px;
+      gap: 40px;
+    }
+
+    .portal-header { text-align: center; max-width: 700px; }
+    .portal-welcome {
+      font-size: 13px;
+      color: rgba(255,255,255,0.4);
+      font-weight: 300;
+      margin-bottom: 8px;
+    }
+    .portal-name {
+      font-size: clamp(26px, 3.5vw, 38px);
+      font-weight: 600;
+      color: #fff;
+    }
+    .portal-name span { color: var(--menthe); }
+    .portal-desc {
+      margin-top: 10px;
+      font-size: 14px;
+      color: rgba(255,255,255,0.4);
+      font-weight: 300;
+    }
+
+    /* Breadcrumb retour */
+    .breadcrumb {
+      position: fixed;
+      top: 16px; left: 16px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.3);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .breadcrumb a {
+      color: rgba(93,226,152,0.6);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .breadcrumb a:hover { color: var(--menthe); }
+
+    /* Grille blocs */
+    .blocs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 14px;
+      width: 100%;
+      max-width: 960px;
+    }
+
+    .bloc-card {
+      background: var(--petrole);
+      border: 1px solid rgba(93,226,152,0.1);
+      border-radius: 16px;
+      padding: 24px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.18s, border-color 0.18s, box-shadow 0.18s;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .bloc-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--menthe);
+      opacity: 0;
+      transition: opacity 0.18s;
+    }
+    .bloc-card:hover:not(.bloc-card--done) {
+      transform: translateY(-3px);
+      border-color: rgba(93,226,152,0.3);
+      box-shadow: 0 10px 36px rgba(0,0,0,0.3);
+    }
+    .bloc-card:hover:not(.bloc-card--done)::before { opacity: 1; }
+
+    .bloc-card--done {
+      opacity: 0.6;
+      cursor: default;
+    }
+    .bloc-card--done::after {
+      content: '✓ Complété';
+      position: absolute;
+      top: 14px; right: 14px;
+      font-size: 11px; font-weight: 500;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--menthe);
+      background: rgba(93,226,152,0.12);
+      border: 1px solid rgba(93,226,152,0.25);
+      border-radius: 20px;
+      padding: 3px 9px;
+    }
+
+    .bloc-num {
+      font-size: 11px; font-weight: 500;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: rgba(93,226,152,0.6);
+    }
+    .bloc-title {
+      font-size: 18px; font-weight: 600;
+      line-height: 1.3; color: #fff;
+    }
+    .bloc-scenario {
+      font-size: 13px; font-weight: 500;
+      color: var(--menthe); opacity: 0.8;
+    }
+    .bloc-desc {
+      font-size: 12.5px; line-height: 1.6;
+      color: rgba(255,255,255,0.45); font-weight: 300;
+    }
+    .bloc-meta {
+      display: flex; gap: 8px; flex-wrap: wrap;
+      margin-top: auto;
+    }
+    .bloc-pill {
+      font-size: 11.5px;
+      color: rgba(255,255,255,0.35);
+      background: rgba(255,255,255,0.05);
+      border-radius: 5px;
+      padding: 2px 8px;
+    }
+
+    /* Spinner */
+    .loading-blocs {
+      display: flex; align-items: center; gap: 10px;
+      color: rgba(255,255,255,0.4); font-size: 14px;
+    }
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2px solid rgba(93,226,152,0.2);
+      border-top-color: var(--menthe);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .portal-footer {
+      font-size: 12px;
+      color: rgba(255,255,255,0.2);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── ÉCRAN LOGIN ── -->
+  <div id="screen-login">
+    <div class="login-box">
+      <div class="login-header">
+        <div class="login-logo">
+          <div class="login-logo-mark">
+            <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
+              <path d="M9 2L16 14H2L9 2Z" fill="#0B2B2D"/>
+            </svg>
+          </div>
+          <span class="login-brand">Éminéo</span>
+        </div>
+        <h1 class="login-title">PAC · MSMC</h1>
+        <p class="login-sub">Manager de la Stratégie Marketing &amp; Com</p>
+        <span class="login-rncp">RNCP 38504</span>
+      </div>
+
+      <div class="login-fields">
+        <div class="field">
+          <label for="inp-prenom">Prénom</label>
+          <input type="text" id="inp-prenom" placeholder="Ton prénom" autocomplete="given-name" />
+        </div>
+        <div class="field">
+          <label for="inp-nom">Nom</label>
+          <input type="text" id="inp-nom" placeholder="Ton nom" autocomplete="family-name" />
+        </div>
+        <div class="field">
+          <label for="inp-email">E-mail école</label>
+          <input type="email" id="inp-email" placeholder="prenom.nom@emineo-education.fr" autocomplete="email" />
+        </div>
+      </div>
+
+      <div>
+        <button class="btn-login" id="btn-login" onclick="handleLogin()">
+          Accéder à mon parcours →
+        </button>
+        <div id="login-error"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ÉCRAN PORTAIL ── -->
+  <div id="screen-portal">
+    <nav class="breadcrumb">
+      <a href="https://emineo-pac.vercel.app">← Tous les titres</a>
+      <span>/</span>
+      <span>MSMC</span>
+    </nav>
+
+    <header class="portal-header">
+      <p class="portal-welcome">Bonjour,</p>
+      <h1 class="portal-name">
+        <span id="display-prenom">—</span> <span style="color:#fff;font-weight:300" id="display-nom">—</span>
+      </h1>
+      <p class="portal-desc">Sélectionne un bloc pour démarrer ou reprendre ton affaire · MSMC RNCP 38504</p>
+    </header>
+
+    <div id="blocs-container" class="loading-blocs">
+      <div class="spinner"></div>
+      Chargement de ton parcours…
+    </div>
+
+    <footer class="portal-footer">Éminéo Education · Usage interne · Dispositif PAC v1.0</footer>
+  </div>
+
+  <script>
+    // ── Config blocs MSMC ──
+    const BLOCS = [
+      {
+        id: 'bc1',
+        num: 'Bloc 1',
+        titre: 'Stratégie de marque',
+        scenario: 'Semaine 1 de Sonia',
+        desc: 'Identité de marque en tension · Note de synthèse veille + Plateforme de marque',
+        meta: ['C1–C6', 'Sept. 2026', 'Sonia Ferracci'],
+        url: 'https://lumio-bc1.vercel.app'
+      },
+      {
+        id: 'bc2',
+        num: 'Bloc 2',
+        titre: 'Orientations stratégiques',
+        scenario: 'Board Northgate',
+        desc: 'B2B vs B2C — décision board · Recommandation orientations stratégiques',
+        meta: ['C7–C12', 'Oct. 2026', 'Jakob Rein'],
+        url: 'https://lumio-bc2.vercel.app'
+      },
+      {
+        id: 'bc3',
+        num: 'Bloc 3',
+        titre: 'Campagne Fantôme de Soi',
+        scenario: 'Campagne qui déraille',
+        desc: 'Dépassement brief + budget + signaux RSE · Rapport d\'étape + Plan de reprise',
+        meta: ['C7–C12', 'Jan. 2027', 'Sonia Ferracci'],
+        url: 'https://lumio-bc3.vercel.app'
+      },
+      {
+        id: 'bc5',
+        num: 'Bloc 5',
+        titre: 'Projet IA Gen',
+        scenario: 'Résistances internes & RGPD',
+        desc: 'Enjeux RGPD / PI · Contribution individuelle PPI',
+        meta: ['C20-II–C22-II', 'Avr. 2027', 'E7'],
+        url: 'https://lumio-bc5.vercel.app'
+      },
+      {
+        id: 'bc6',
+        num: 'Bloc 6',
+        titre: 'Opération PULSE',
+        scenario: 'Post-certification MDR',
+        desc: 'Relancement marque — repositionnement · Contribution individuelle PPC',
+        meta: ['C20-III–C22-III', 'Juin 2027', 'E7'],
+        url: 'https://lumio-bc6.vercel.app'
+      }
+    ];
+
+    // ── Hash déterministe (email → identifiant stable) ──
+    async function hashEmail(email) {
+      const buf = await crypto.subtle.digest(
+        'SHA-256',
+        new TextEncoder().encode(email.toLowerCase().trim())
+      );
+      return Array.from(new Uint8Array(buf))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('')
+        .slice(0, 24);
+    }
+
+    // ── State ──
+    let studentHash = null;
+    let studentProgress = {};
+
+    // ── Login ──
+    async function handleLogin() {
+      const prenom = document.getElementById('inp-prenom').value.trim();
+      const nom    = document.getElementById('inp-nom').value.trim();
+      const email  = document.getElementById('inp-email').value.trim();
+      const err    = document.getElementById('login-error');
+      const btn    = document.getElementById('btn-login');
+
+      err.textContent = '';
+
+      if (!prenom || !nom || !email) {
+        err.textContent = 'Remplis les trois champs pour continuer.';
+        return;
+      }
+      const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRe.test(email)) {
+        err.textContent = 'Adresse e-mail invalide.';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Chargement…';
+
+      studentHash = await hashEmail(email);
+
+      // Stocker localement pour la session
+      sessionStorage.setItem('pac_msmc_prenom', prenom);
+      sessionStorage.setItem('pac_msmc_nom', nom);
+      sessionStorage.setItem('pac_msmc_email', email);
+      sessionStorage.setItem('pac_msmc_hash', studentHash);
+
+      await showPortal(prenom, nom);
+    }
+
+    // ── Affichage portail ──
+    async function showPortal(prenom, nom) {
+      document.getElementById('screen-login').style.display = 'none';
+      const screenPortal = document.getElementById('screen-portal');
+      screenPortal.style.display = 'flex';
+
+      document.getElementById('display-prenom').textContent = prenom;
+      document.getElementById('display-nom').textContent    = nom;
+
+      // Charger le progress Redis
+      await loadProgress();
+      renderBlocs();
+    }
+
+    async function loadProgress() {
+      try {
+        const res  = await fetch(`/api/progress?hash=${studentHash}`);
+        const data = await res.json();
+        studentProgress = data.progress || {};
+      } catch {
+        // Si Redis KO, tous les blocs sont disponibles
+        studentProgress = {};
+      }
+    }
+
+    function renderBlocs() {
+      const container = document.getElementById('blocs-container');
+      container.className = 'blocs-grid';
+      container.innerHTML = '';
+
+      BLOCS.forEach(bloc => {
+        const done   = studentProgress[bloc.id] === 'completed';
+        const card   = document.createElement('a');
+        card.className = 'bloc-card' + (done ? ' bloc-card--done' : '');
+        card.href    = done ? '#' : bloc.url;
+        if (!done) {
+          card.target = '_blank';
+          card.rel    = 'noopener noreferrer';
+        }
+
+        card.innerHTML = `
+          <div class="bloc-num">${bloc.num}</div>
+          <div>
+            <div class="bloc-title">${bloc.titre}</div>
+            <div class="bloc-scenario">${bloc.scenario}</div>
+          </div>
+          <p class="bloc-desc">${bloc.desc}</p>
+          <div class="bloc-meta">
+            ${bloc.meta.map(m => `<span class="bloc-pill">${m}</span>`).join('')}
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    // ── Auto-restore session ──
+    (async function init() {
+      const prenom = sessionStorage.getItem('pac_msmc_prenom');
+      const nom    = sessionStorage.getItem('pac_msmc_nom');
+      const hash   = sessionStorage.getItem('pac_msmc_hash');
+      if (prenom && nom && hash) {
+        studentHash = hash;
+        await showPortal(prenom, nom);
+      }
+    })();
+
+    // ── Entrée clavier ──
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        const loginScreen = document.getElementById('screen-login');
+        if (loginScreen.style.display !== 'none' && !document.getElementById('btn-login').disabled) {
+          handleLogin();
+        }
+      }
+    });
+  </script>
+</body>
+</html>
