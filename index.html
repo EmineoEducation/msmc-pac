@@ -488,7 +488,7 @@
         const done   = studentProgress[bloc.id] === 'completed';
         const card   = document.createElement('a');
         card.className = 'bloc-card' + (done ? ' bloc-card--done' : '');
-        card.href    = done ? '#' : bloc.url;
+        card.href    = done ? '#' : `${bloc.url}?h=${studentHash}`;
         if (!done) {
           card.target = '_blank';
           card.rel    = 'noopener noreferrer';
