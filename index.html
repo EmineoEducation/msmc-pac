@@ -318,6 +318,8 @@
         <div class="field">
           <label for="inp-email">E-mail école</label>
           <input type="email" id="inp-email" placeholder="prenom.nom@emineo-education.fr" autocomplete="email" />
+          </div>
+                <div class="field"><label for="inp-campus">Campus</label><select id="inp-campus" style="width:100%;padding:12px 14px;border-radius:8px;border:1px solid rgba(93,226,152,0.15);background:rgba(11,43,45,0.5);color:white;font-size:15px;font-family:inherit;outline:none;cursor:pointer"><option value="">— Choisir —</option><option value="paris">Paris</option><option value="nantes">Nantes</option><option value="bordeaux">Bordeaux</option><option value="le mans">Le Mans</option></select></div>
         </div>
       </div>
 
@@ -450,6 +452,7 @@
       sessionStorage.setItem('pac_msmc_nom', nom);
       sessionStorage.setItem('pac_msmc_email', email);
       sessionStorage.setItem('pac_msmc_hash', studentHash);
+      sessionStorage.setItem('pac_msmc_campus', document.getElementById('inp-campus').value);
 
       await showPortal(prenom, nom);
     }
@@ -492,7 +495,7 @@
         const done   = studentProgress[bloc.id] === 'completed';
         const card   = document.createElement('a');
         card.className = 'bloc-card' + (done ? ' bloc-card--done' : '');
-        const _params = `?p=${encodeURIComponent(_p)}&n=${encodeURIComponent(_n)}&e=${encodeURIComponent(_e)}`;
+        const _params = `?p=${encodeURIComponent(_p)}&n=${encodeURIComponent(_n)}&e=${encodeURIComponent(_e)}&c=${encodeURIComponent(_c)}`;
         card.href    = done ? '#' : `${bloc.url}${_params}`;
         if (!done) {
           card.target = '_blank';
